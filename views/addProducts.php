@@ -1,5 +1,6 @@
 <?php 
-require 'products.php';
+
+require '../logic/products.php';
 ?>
 
 
@@ -32,7 +33,7 @@ require 'products.php';
 
 <div class="container">
   <div class="d-flex flex-row-reverse">
-    <a href="index.php" class="btn btn-primary ">Product list</a>
+    <a href="../index.php" class="btn btn-primary ">Product list</a>
   </div>
 
 <?php 
@@ -103,21 +104,22 @@ if(isset($_SESSION['required'])){
 
 <div class="form-group hide dimension">
     <label for="exampleInputPassword1">Height</label>
-    <input type="text" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
     <label for="exampleInputPassword1">Widht</label>
-    <input type="text" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
     <label for="exampleInputPassword1">Length</label>
-    <input type="text" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
     <small id="emailHelp" class="form-text text-muted">Please, provide dimension dimension in HxWxL format.</small>
 </div>
-
-  <button type="submit" class="btn btn-primary" name="ok">Submit</button>
+<input hidden name="action" value="save">
+  <button type="submit" class="btn btn-primary">Submit</button>
 
 </form>
 
 </div>
 
 <script>
+
 window.addEventListener('DOMContentLoaded', function() {
   var select = document.getElementById('selectedCharacteristic'),
   hide = document.getElementsByClassName('hide');
@@ -147,15 +149,16 @@ window.addEventListener('DOMContentLoaded', function() {
   form.addEventListener('submit', async (e)=>{
     //cancel the default action(reload after submit)
     e.preventDefault();
-        fetch('preaperingDataForProduct.php',{
+        fetch('../routing/routes.php',{
           method: 'POST',
-          body: new FormData(addNewProduct) //sen to serve all data from form
+          body: new FormData(addNewProduct) //sent to server all data from form
         })
         .then((response) => {
              return response.text();//get only text part from all server response
         })
         .then((text) => {
-             location.reload();
+         // console.log(text);
+         location.reload();
       });
       });
   });

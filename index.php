@@ -1,6 +1,6 @@
 <?php 
-
-    require 'products.php';
+    declare(strict_types=1);
+    require 'logic/products.php';
     $products = new Product();
 ?>
 
@@ -14,13 +14,9 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles.css">
-
-
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
-
 
    <div class="container-fluid pl-5 pr-5">
         <div class="row pt-5">
@@ -30,8 +26,8 @@
             <div class="col-6 text-right">
                 <form action="" method="POST" id="actionForm">
                 <select name="action" >
-                    <option >Mass delete</option>
-                    <option >Add new product</option>
+                    <option value="delete">Mass delete</option>
+                    <option value="add">Add new product</option>
                 </select>
                 <input type="submit" value="Apply" name="apply">           
             </div>
@@ -48,7 +44,7 @@
           <input class="delCheckbox" type="checkbox" name="card[]" value="<?php echo $product['SKU'] ?>" >
           <h5 class="text-center"><?php echo $product['SKU'] ?></h5>
           <p class="cardDesc text-center"><?php echo $product['name'] ?></p>
-          <p class="cardDesc text-center"><?php echo number_format($product['price'],2,'.','') ?> $</p>
+          <p class="cardDesc text-center"><?php echo number_format((int)$product['price'],2,'.','') ?> $</p>
           <p class="cardDesc text-center"><?php echo $product['characteristics'] ?></p>
       </div>
     
@@ -57,6 +53,7 @@
 </div> </form>
 </div>
 
+<!--
 <div class="container-fluid">
 <div class="row bg-primary">
     <div class="col-12 text-right " style="color:yellow";>
@@ -65,7 +62,7 @@
     </div>
 </div>
 </div>
-
+-->
 
 <script>
     let checkbox = document.getElementsByClassName('delCheckbox');
@@ -75,14 +72,13 @@
 
     function checked(){
         let action = this.parentNode.classList.contains('checked') ? 'remove' : 'add';
-        console.log(action);
         this.parentNode.classList[action]('checked');
     };
 window.addEventListener('DOMContentLoaded', function() {
   var form = document.getElementById('actionForm');
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
-       await fetch('deleteProduct.php',{
+       await fetch('routing/routes.php',{
           method: 'POST',
           body: new FormData(actionForm)
         })
@@ -92,7 +88,7 @@ window.addEventListener('DOMContentLoaded', function() {
         .then((text) => {
             let deletingEl = document.getElementsByClassName('checked');
             [].forEach.call(deletingEl, function(el){
-             el.classList['add']('del');
+             el.classList.add('del');
              setTimeout(function(){el.remove()},500);
             });  
            if(text!=''){
@@ -101,6 +97,7 @@ window.addEventListener('DOMContentLoaded', function() {
       });
       });
   });
+  /*
 setInterval( async (e) =>{
   await fetch('hitCounter.php', {
        method: 'POST'
@@ -113,7 +110,7 @@ setInterval( async (e) =>{
        total.innerHTML = newtext['total'];
        unique.innerHTML = newtext['unique'];
        console.log(text);
-   }); },100);
+   }); },100);*/
   </script>
 </body>
 </html>
