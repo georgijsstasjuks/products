@@ -1,6 +1,6 @@
 <?php 
 
-require '../logic/products.php';
+require '../logic/Product.php';
 ?>
 
 

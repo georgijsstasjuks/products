@@ -1,6 +1,6 @@
 <?php 
 
-require '../logic/products.php';
+require '../logic/Product.php';
 
 $products = new Product();
 $action = $_POST['action'];  
@@ -11,16 +11,14 @@ switch($action){
         if(isset($_POST['card'])){ 
            Product::delete($_POST['card']);  
         echo '';
-    }
-    break;
-
+        }
+        break;
     case "add":
         echo 'views/addProducts.php'; 
-    break;
-
+        break;
     case "save":
         $result = Product::save($_POST);
-      echo '';
-    break;
+        echo '';
+        break;
 }
  

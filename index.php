@@ -1,6 +1,8 @@
 <?php 
     declare(strict_types=1);
-    require 'logic/products.php';
+
+    require 'logic/Product.php';
+    
     $products = new Product();
 ?>
 
@@ -38,7 +40,7 @@
 
     <?php 
        $products = $products->index();
-    foreach($products as $product){
+       foreach($products as $product){
      ?>
      <div class="p-1 mb-4 border border-dark productCard">
           <input class="delCheckbox" type="checkbox" name="card[]" value="<?php echo $product['SKU'] ?>" >
@@ -48,9 +50,12 @@
           <p class="cardDesc text-center"><?php echo $product['characteristics'] ?></p>
       </div>
     
-    <?php }?>
+    <?php
+      }
+    ?>
    
-</div> </form>
+</div> 
+</form>
 </div>
 
 <!--
