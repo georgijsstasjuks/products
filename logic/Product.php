@@ -147,6 +147,7 @@ private $characteristics;
     public function index(){
         $db = new dbConnection();
         $db->connect('products2');
+        self::createTable();
         $query ="SELECT * FROM products2";
         $result = mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection)); 
         return $result; 
