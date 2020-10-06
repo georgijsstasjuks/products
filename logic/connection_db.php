@@ -9,7 +9,7 @@ class dbConnection{
 
         //open connection to db
     public function connect($database){
-        if($_SERVER['REQUEST_URI']!='/products/')
+        if($_SERVER['REQUEST_URI']!='/')
             $file = fopen('../config/env','r') or die("can't find file");
         else 
             $file = fopen('config/env','r') or die("can't find file");
