@@ -33,7 +33,7 @@ require '../logic/Product.php';
 
 <div class="container">
   <div class="d-flex flex-row-reverse">
-    <a href="../index.php" class="btn btn-primary ">Product list</a>
+    <a href="../" class="btn btn-primary ">Product list</a>
   </div>
 
 <?php 

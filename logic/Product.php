@@ -25,7 +25,7 @@ private $characteristics;
 
 
     //create table if not created yet
-   private function createTable(){
+    private function createTable(){
         $db = new dbConnection();
         $db->connect('products2');
         $query ="CREATE TABLE IF NOT EXISTS products2 
