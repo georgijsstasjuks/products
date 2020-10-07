@@ -1,5 +1,5 @@
 <?php 
-
+declare(strict_types=1);
 require '../logic/Product.php';
 ?>
 
@@ -40,11 +40,11 @@ require '../logic/Product.php';
 if(isset($_SESSION['flash']))
   if($_SESSION['flash']=="success"){     
 ?>
-<div class="alert alert-success" role="alert">New record succesfully added!</div>
+<div class="alert alert-success" role="alert">A new entry has been added!</div>
 
 <?php }else{
     ?>
-  <div class="alert alert-danger" role="alert">This SKU already used!</div>
+  <div class="alert alert-danger" role="alert">This SKU is already used!</div>
   <?php }
   unset($_SESSION['flash']);
   ?>
@@ -53,7 +53,7 @@ if(isset($_SESSION['flash']))
 if(isset($_SESSION['required'])){
  unset($_SESSION['required']);
 ?>
-<div class="alert alert-danger" role="alert">You must filled all fields</div>
+<div class="alert alert-danger" role="alert">All fields must be filled in!</div>
 
 <?php } ?>
  

@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-
 session_start();
 
 require_once 'connection_db.php';
-require_once 'ProductInterface.php';
+require_once 'BaseOperations_Interface.php';
 
 
 
 class Product implements base_operations{
 
-private $SKU;
-private $name;
-private $price;
-private $characteristics;
+private string $SKU;
+private string $name;
+private string $price;
+private string $characteristics;
 
     public function __construct($SKU='',$name='',$price='',$characteristics=''){
               
@@ -41,7 +40,7 @@ private $characteristics;
     }
 
     //add products to the db
-    private function addProduct($data){
+    private function addProduct(array $data){
         $db = new dbConnection();
         $db->connect('products2');
         self::createTable();
@@ -61,7 +60,7 @@ private $characteristics;
     }
 
     //checking for unique SKU 
-    private function checkSku($SKU){
+    private function checkSku(string $SKU){
         $db = new dbConnection();
         $db->connect('products2');
         $query ="SELECT * FROM products2 WHERE SKU='$SKU'";
@@ -72,7 +71,7 @@ private $characteristics;
 
 
     //clean data before saving(deleting all extraspaces and HTML tags)
-    private function cleanData($data){
+    private function cleanData(array $data){
         $option = strip_tags($data['selectedCharacteristic']);  
         $characteristic = $option . ": ";
         $filtred_array = array_filter($data['characteristics']); 
@@ -95,13 +94,13 @@ private $characteristics;
     }
 
 
-    private function cleanExtraChar($filtred_array, $option,$characteristic){
+    private function cleanExtraChar(array $filtred_array, string $option, string $characteristic){
 
         switch ($option){
             case 'Dimension':
                 if(count($filtred_array)==3){ 
                     array_walk($filtred_array,function(&$el){
-                    $el=trim($el);
+                    $el=trim(strip_tags($el));
                 });
                 $characteristic .= implode($filtred_array,"x"); 
                 } else {
@@ -111,7 +110,7 @@ private $characteristics;
                 break;
             case 'Size':
                 if(count($filtred_array)==1){
-                    $characteristic .= trim(implode($filtred_array)) ." MB";;    
+                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." MB";;    
                 } else {
                     $_SESSION['required']="all fields must be filled";
                     return false;
@@ -119,7 +118,7 @@ private $characteristics;
                 break;
             case 'Weight':
                 if(count($filtred_array)==1){
-                    $characteristic .= trim(implode($filtred_array)) ." Kg"; 
+                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." Kg"; 
                 } else {
                     $_SESSION['required']="all fields must be filled";
                     return false;
@@ -134,7 +133,7 @@ private $characteristics;
 /* *************************** PUBLIC FUNCTIONS ********************************* */
 
     //save data
-    static public function save($data){
+    static public function save(array $data){
         $cleanData =self::cleanData($data);
         if(!$cleanData){
             return false;
@@ -154,7 +153,7 @@ private $characteristics;
     }
     
     //delete all selected products
-    static public function delete($data){
+    static public function delete(array $data){
         $db = new dbConnection();
         $db->connect('products2');
         foreach($data as $product){
