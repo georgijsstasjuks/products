@@ -23,12 +23,17 @@ class dbConnection implements Database{
 
     //open connection to db
     public function connect(){
+        if($_SERVER['REQUEST_URI']=="/" || $_SERVER['REQUEST_URI']=="/index.php"){
+            $path = 'config/env';
+        }
+        else{
         $request = explode("/",$_SERVER['REQUEST_URI']);
-      //  var_dump($request);
-        if(@$request[2] == "index.php" || @$request[2]=="" || $request[1]=="")
+  
+        if($request[2] == "index.php" || $request[2]=="" || $request[1]=="")
             $path = 'config/env';
         else 
             $path = '../config/env';
+        }
         foreach(self::getLines($path) as $value){
             $this->{$value[0]} = $value[1];         
         }
