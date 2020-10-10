@@ -1,9 +1,9 @@
 <?php 
     declare(strict_types=1);
-
+    require 'logic/connection_db.php';
     require 'logic/Product.php';
-    
-    $products = new Product();
+    $obj = new dbConnection();
+    $products = new Product($obj);
 ?>
 
 <!DOCTYPE html>
@@ -96,9 +96,11 @@ window.addEventListener('DOMContentLoaded', function() {
              el.classList.add('del');
              setTimeout(function(){el.remove()},500);
             });  
-           if(text!=''){
-                location.replace(text);
+           if(text.length>2){
+               //console.log(text.length);
+               location.replace(text);
             }
+           
       });
       });
   });

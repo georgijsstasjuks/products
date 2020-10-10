@@ -157,8 +157,7 @@ window.addEventListener('DOMContentLoaded', function() {
              return response.text();//get only text part from all server response
         })
         .then((text) => {
-         // console.log(text);
-         location.reload();
+          location.reload();
       });
       });
   });

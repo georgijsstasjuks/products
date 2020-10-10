@@ -6,18 +6,15 @@ session_start();
 
 require_once 'connection_db.php';
 require_once 'BaseOperations_Interface.php';
-
+require_once 'DatabaseIntarface.php';
 
 
 class Product implements base_operations{
 
-private string $SKU;
-private string $name;
-private string $price;
-private string $characteristics;
+    public $database;
 
-    public function __construct($SKU='',$name='',$price='',$characteristics=''){
-              
+    public function __construct(Database $database){
+        $this->database = $database;
     }
 
 /* *************************** PRIVATE FUNCTIONS ********************************* */
@@ -25,8 +22,7 @@ private string $characteristics;
 
     //create table if not created yet
     private function createTable(){
-        $db = new dbConnection();
-        $db->connect('products2');
+      
         $query ="CREATE TABLE IF NOT EXISTS products2 
         (
             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -35,37 +31,29 @@ private string $characteristics;
             price FLOAT(30) NOT NULL,
             characteristics VARCHAR(200) NOT NULL
         )";
-        mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection));
-        $db->close();
+        mysqli_query($this->database->connect()) or die("ERROR " . mysqli_error($this->database->connect()));
     }
 
     //add products to the db
     private function addProduct(array $data){
-        $db = new dbConnection();
-        $db->connect('products2');
-        self::createTable();
+        self::checkTable();
         $data = (object) $data;
         $check=self::checkSku($data->SKU);
         if($check==0){
             $query ="INSERT INTO products2 (SKU, name, price, characteristics) VALUES ('$data->SKU','$data->name','$data->price','$data->characteristics')";
-            $result = mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection)); 
+            $result = mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect())); 
             $_SESSION['flash']="success";
-            $db->close();
             return true;
         } else {
             $_SESSION['flash']="fail";
         }
-    $db->close();
     return false;
     }
 
     //checking for unique SKU 
     private function checkSku(string $SKU){
-        $db = new dbConnection();
-        $db->connect('products2');
         $query ="SELECT * FROM products2 WHERE SKU='$SKU'";
-        $result = mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection)); 
-        $db->close();
+        $result = mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect()));
         return $result->num_rows;
     }
 
@@ -125,15 +113,21 @@ private string $characteristics;
                } 
                break;
            }
-
     return  $characteristic;
     }
 
+    //check if table already exists
+    private function checkTable(){
+        if(!mysqli_query($this->database->connect(), "DESCRIBE `products2`")) {
+            self::createTable();
+        }
+    }
 
-/* *************************** PUBLIC FUNCTIONS ********************************* */
+
+/* *************************** PUBLIC FUNCTIONS ********************************* */  
 
     //save data
-    static public function save(array $data){
+    public function save(array $data){
         $cleanData =self::cleanData($data);
         if(!$cleanData){
             return false;
@@ -144,23 +138,19 @@ private string $characteristics;
 
     //show all products on main page
     public function index(){
-        $db = new dbConnection();
-        $db->connect('products2');
-        self::createTable();
+        self::checkTable();
         $query ="SELECT * FROM products2";
-        $result = mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection)); 
+        $result = mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect())); 
         return $result; 
     }
     
     //delete all selected products
-    static public function delete(array $data){
-        $db = new dbConnection();
-        $db->connect('products2');
+    public function delete(array $data){
         foreach($data as $product){
             $query ="DELETE FROM products2 WHERE SKU ='$product'";
-            mysqli_query($db->connection, $query) or die("ERROR " . mysqli_error($db->connection));
-        } 
-        $db->close();
+            mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect()));
+        }
+        return true;
     }
         
 }
