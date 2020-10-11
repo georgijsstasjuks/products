@@ -37,11 +37,9 @@ class Product implements base_operations{
     //add products to the db
     private function addProduct(array $data){
         self::checkTable();
-        $data = (object) $data;
-        $check=self::checkSku($data->SKU);
+        $check=self::checkSku($data['SKU']);
         if($check==0){
-            $query ="INSERT INTO products2 (SKU, name, price, characteristics) VALUES ('$data->SKU','$data->name','$data->price','$data->characteristics')";
-            $result = mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect())); 
+            $this->database->save("products2",$data);
             $_SESSION['flash']="success";
             return true;
         } else {
@@ -78,6 +76,10 @@ class Product implements base_operations{
         }
 
         $data['characteristics'] =  $characteristic;
+        
+        unset($data['action']);
+        unset($data['selectedCharacteristic']);
+        
         return $data;
     }
 
@@ -132,8 +134,8 @@ class Product implements base_operations{
         if(!$cleanData){
             return false;
         }
-        $result = self::addProduct($cleanData);
-        return $result;
+       $result = self::addProduct($cleanData);
+       return $result;
     }
 
     //show all products on main page

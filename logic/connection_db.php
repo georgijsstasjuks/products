@@ -42,9 +42,18 @@ class dbConnection implements Database{
         $connect->set_charset("utf-8");
         return $connect;
     }
-}
 
+    public function save($table, $data){
+       $keys = implode(", ",array_keys($data));
+       $values = implode(", ",array_values($data));
+       $values = str_replace(', ', "', '", $values);
+       $query ="INSERT INTO {$table} ({$keys}) VALUES ('$values')";  
+       $result = mysqli_query($this->connect(),$query) or die("ERROR " . mysqli_error($this->connect()));   
+       return $result;
+    }
+}
+/*
 $obj = new dbConnection();
 $obj->connect();
-
+*/
 ?>
