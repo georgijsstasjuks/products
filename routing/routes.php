@@ -1,9 +1,8 @@
 <?php 
 declare(strict_types=1);
-    require '../logic/connection_db.php';
+    require '../logic/Database.php';
     require '../logic/Product.php';
-    $obj = new dbConnection();
-    $product = new Product($obj);
+    $product = new Product(new Database());
     $action = $_POST['action'];  
 
 switch($action){

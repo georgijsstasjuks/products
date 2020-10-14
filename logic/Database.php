@@ -1,7 +1,7 @@
 <?php 
 declare(strict_types=1);
 require_once 'DatabaseIntarface.php';
-class dbConnection implements Database{
+class Database implements DatabaseInterface{
 
     private string $host;
     private string $user; 
@@ -51,9 +51,21 @@ class dbConnection implements Database{
        $result = mysqli_query($this->connect(),$query) or die("ERROR " . mysqli_error($this->connect()));   
        return $result;
     }
+
+    public function delete($table, $SKU){
+        $query ="DELETE FROM {$table} WHERE SKU ='{$SKU}'";
+        mysqli_query($this->connect(), $query) or die("ERROR " . mysqli_error($this->connect()));
+        return true;
+    }
+
+    public function get_all($table){
+        $query = "SELECT * FROM {$table}";
+        $result = mysqli_query($this->connect(), $query) or die ("ERROR " . mysqli_error($this->connect()));
+        return $result;
+    }
 }
 /*
-$obj = new dbConnection();
-$obj->connect();
+$obj = new Database();
+$obj->delete("products2","ADSAD");
 */
 ?>

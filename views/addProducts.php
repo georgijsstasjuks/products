@@ -22,19 +22,14 @@ require '../logic/Product.php';
 }
 
 .show{
-  display:block!important;
+  display:flex!important;
 }
 </style>
 
 </head>
 <body>
 
-
-
-<div class="container">
-  <div class="d-flex flex-row-reverse">
-    <a href="../" class="btn btn-primary ">Product list</a>
-  </div>
+<div class="container"> 
 
 <?php 
 if(isset($_SESSION['flash']))
@@ -60,24 +55,24 @@ if(isset($_SESSION['required'])){
 
 
 
-<form method="POST" action="" id="addNewProduct">
-  <div class="form-group">
-    <label for="exampleInputEmail1">SKU</label>
-    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU" required>
+<form method="POST" action="" id="addNewProduct" class="container pt-5 mt-5">
+  <div class="form-group row align-items-center">
+    <label for="exampleInputEmail1" class="col-1">SKU</label>
+    <input type="text" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU" required>
   </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Name</label>
-    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="name" required>
+  <div class="form-group row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Name</label>
+    <input type="text" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="name" required>
   </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Price</label>
-    <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="price" required>
+  <div class="form-group row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Price</label>
+    <input type="number" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="price" required>
   </div>
 
 
-
-  
-<select id="selectedCharacteristic" name="selectedCharacteristic" class="main_field" aria-required="true">
+  <div class="form-group row align-items-center">
+  <label for="exampleInputPassword1" class="col-2">Type swticher</label>
+  <select id="selectedCharacteristic" name="selectedCharacteristic" class="col-2" aria-required="true">
 
     <option value="Size" selected="selected">
         DvD-disc
@@ -89,31 +84,45 @@ if(isset($_SESSION['required'])){
         Furniture
     </option>
 </select>
+  </div>
+  
+  <div class="form-group">
 
-<div class="form-group hide size">
-    <label for="exampleInputPassword1">Size</label>
-    <input type="text" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">MB
-    <small id="emailHelp" class="form-text text-muted">Please, enter the size of DvD-disc in MB.</small>
+<div class="form-group hide size row align-items-center">
+    <label for="text" class="col-1">Size</label>
+    <input type="text" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <small id="emailHelp" class="form-text text-muted col-3">Please, enter the size of DvD-disc in MB.</small>
 </div>
 
-<div class="form-group hide weight">
-    <label for="exampleInputPassword1">Weight</label>
-    <input type="text" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">kg
-    <small id="emailHelp" class="form-text text-muted">Please, enter the weight of book.</small>
+<div class="form-group hide weight row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Weight</label>
+    <input type="text" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <small id="emailHelp" class="form-text text-muted col-3">Please, enter the weight of book.</small>
 </div>
 
-<div class="form-group hide dimension">
-    <label for="exampleInputPassword1">Height</label>
-    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
-    <label for="exampleInputPassword1">Widht</label>
-    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
-    <label for="exampleInputPassword1">Length</label>
-    <input type="number" class="form-control furnitureInput" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
-    <small id="emailHelp" class="form-text text-muted">Please, provide dimension dimension in HxWxL format.</small>
+<div class="form-group hide dimension row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Height</label>
+    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    </div>
+    <div class="form-group hide dimension row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Widht</label>
+    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    </div>
+    <div class="form-group hide dimension row align-items-center">
+    <label for="exampleInputPassword1" class="col-1">Length</label>
+    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <small id="emailHelp" class="form-text text-muted col-3">Please, provide dimension dimension in HxWxL format.</small>
+    </div>
 </div>
 <input hidden name="action" value="save">
-  <button type="submit" class="btn btn-primary">Submit</button>
 
+<div class="form-group row  justify-content-between align-items-center">
+   <div class="col-6 col-md-5 col-sm-6 col-lg-4" >  <button type="submit" class="btn btn-success col-6 col-md-6 col-sm-6">Submit</button></div>
+   <div class="col-6 col-md-5 col-sm-6 col-lg-4"> <a href="../" class="btn btn-primary col-8 col-md-7 col-sm-8 col-lg-6">Products</a></div>
+   
+    </div>
+
+  </div>
 </form>
 
 </div>

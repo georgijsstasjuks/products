@@ -1,9 +1,8 @@
 <?php 
     declare(strict_types=1);
-    require 'logic/connection_db.php';
+    require 'logic/Database.php';
     require 'logic/Product.php';
-    $obj = new dbConnection();
-    $products = new Product($obj);
+    $products = new Product(new Database());
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +19,9 @@
     
 </head>
 <body>
+<?php 
 
+?>
    <div class="container-fluid pl-5 pr-5">
         <div class="row pt-5">
             <div class="col-6 text-left">

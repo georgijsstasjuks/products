@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 session_start();
 
-require_once 'connection_db.php';
+require_once 'Database.php';
 require_once 'BaseOperations_Interface.php';
 require_once 'DatabaseIntarface.php';
 
@@ -13,7 +13,7 @@ class Product implements base_operations{
 
     public $database;
 
-    public function __construct(Database $database){
+    public function __construct(DatabaseInterface $database){
         $this->database = $database;
     }
 
@@ -31,7 +31,7 @@ class Product implements base_operations{
             price FLOAT(30) NOT NULL,
             characteristics VARCHAR(200) NOT NULL
         )";
-        mysqli_query($this->database->connect()) or die("ERROR " . mysqli_error($this->database->connect()));
+        mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect()));
     }
 
     //add products to the db
@@ -133,24 +133,20 @@ class Product implements base_operations{
         $cleanData =self::cleanData($data);
         if(!$cleanData){
             return false;
-        }
-       $result = self::addProduct($cleanData);
-       return $result;
+        }   
+       return self::addProduct($cleanData);
     }
 
     //show all products on main page
     public function index(){
         self::checkTable();
-        $query ="SELECT * FROM products2";
-        $result = mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect())); 
-        return $result; 
+        return $this->database->get_all("products2");
     }
     
     //delete all selected products
     public function delete(array $data){
-        foreach($data as $product){
-            $query ="DELETE FROM products2 WHERE SKU ='$product'";
-            mysqli_query($this->database->connect(), $query) or die("ERROR " . mysqli_error($this->database->connect()));
+        foreach($data as $SKU){
+            $this->database->delete("products2",$SKU);
         }
         return true;
     }
