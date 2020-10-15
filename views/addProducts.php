@@ -24,6 +24,12 @@ require '../logic/Product.php';
 .show{
   display:flex!important;
 }
+
+.error{
+ 
+  border-color: red!important;
+
+}
 </style>
 
 </head>
@@ -35,38 +41,39 @@ require '../logic/Product.php';
 if(isset($_SESSION['flash']))
   if($_SESSION['flash']=="success"){     
 ?>
-<div class="alert alert-success" role="alert">A new entry has been added!</div>
+<div class="alert alert-success text-center" role="alert">A new entry has been added!</div>
 
 <?php }else{
     ?>
-  <div class="alert alert-danger" role="alert">This SKU is already used!</div>
+  <div class="alert alert-danger text-center" role="alert">This SKU is already used!</div>
   <?php }
-  unset($_SESSION['flash']);
+  
   ?>
 
 <?php 
 if(isset($_SESSION['required'])){
- unset($_SESSION['required']);
+ 
 ?>
-<div class="alert alert-danger" role="alert">All fields must be filled in!</div>
+<div class="alert alert-danger text-center" role="alert">All fields must be filled in!</div>
 
 <?php } ?>
- 
-
-
+ <?php // var_dump(isset($_SESSION['disc_empty']))?>
 
 <form method="POST" action="" id="addNewProduct" class="container pt-5 mt-5">
   <div class="form-group row align-items-center">
     <label for="exampleInputEmail1" class="col-1">SKU</label>
-    <input type="text" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU" required>
+    <input type="text" class="form-control col-9 <?php if(isset($_SESSION['SKU_empty'])){?> error  <?php }?>" 
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU" <?php if(isset($_SESSION['SKU'])){?> value="<?php echo $_SESSION['SKU'];?>"  <?php } ?> >
   </div>
   <div class="form-group row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Name</label>
-    <input type="text" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="name" required>
+    <input type="text" class="form-control col-9 <?php if(isset($_SESSION['name_empty'])){?> error  <?php }?>"
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="name" <?php if(isset($_SESSION['name'])){?> value="<?php echo $_SESSION['name'];?>"  <?php } ?> >
   </div>
   <div class="form-group row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Price</label>
-    <input type="number" class="form-control col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="price" required>
+<input type="number" class="form-control col-9 <?php if(isset($_SESSION['price_empty'])){?> error  <?php }?>"
+ id="exampleInputEmail1" aria-describedby="emailHelp" name="price" <?php if(isset($_SESSION['price'])){?> value="<?php echo $_SESSION['price'];?>"  <?php } ?> >
   </div>
 
 
@@ -74,13 +81,13 @@ if(isset($_SESSION['required'])){
   <label for="exampleInputPassword1" class="col-2">Type swticher</label>
   <select id="selectedCharacteristic" name="selectedCharacteristic" class="col-2" aria-required="true">
 
-    <option value="Size" selected="selected">
+    <option value="Size" <?php if(isset($_SESSION['option_disc'])){ ?> selected="selected" <?php   }?>>
         DvD-disc
     </option>
-    <option value="Weight">
+    <option value="Weight" <?php if(isset($_SESSION['option_book'])){ ?> selected="selected" <?php  }?>>
         Book
     </option>
-    <option value="Dimension">
+<option value="Dimension"  <?php if(isset($_SESSION['option_furniture'])){ ?> selected="selected" <?php }?> >
         Furniture
     </option>
 </select>
@@ -90,27 +97,32 @@ if(isset($_SESSION['required'])){
 
 <div class="form-group hide size row align-items-center">
     <label for="text" class="col-1">Size</label>
-    <input type="text" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['disc_empty'])){?>error<?php }?>"
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['disc'])){?> value="<?php echo $_SESSION['disc'];?>"  <?php } ?> >
     <small id="emailHelp" class="form-text text-muted col-3">Please, enter the size of DvD-disc in MB.</small>
 </div>
 
 <div class="form-group hide weight row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Weight</label>
-    <input type="text" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['book_empty'])){?>error<?php }?>" 
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['book'])){?> value="<?php echo $_SESSION['book'];?>"  <?php } ?>>
     <small id="emailHelp" class="form-text text-muted col-3">Please, enter the weight of book.</small>
 </div>
 
 <div class="form-group hide dimension row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Height</label>
-    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['height_empty'])){?>error<?php }?>"
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['height'])){?> value="<?php echo $_SESSION['height'];?>"  <?php }?>>
     </div>
     <div class="form-group hide dimension row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Widht</label>
-    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['width_empty'])){?>error<?php }?>" 
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['width'])){?> value="<?php echo $_SESSION['width'];?>"  <?php }?> >
     </div>
     <div class="form-group hide dimension row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Length</label>
-    <input type="number" class="form-control furnitureInput col-9" id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['length_empty'])){?>error<?php }?>"
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]"<?php if(isset($_SESSION['length'])){?> value="<?php echo $_SESSION['length'];?>"  <?php }?> >
     <small id="emailHelp" class="form-text text-muted col-3">Please, provide dimension dimension in HxWxL format.</small>
     </div>
 </div>
@@ -127,12 +139,16 @@ if(isset($_SESSION['required'])){
 
 </div>
 
+
+<?php $_SESSION=[];?>
+
 <script>
 
 window.addEventListener('DOMContentLoaded', function() {
   var select = document.getElementById('selectedCharacteristic'),
   hide = document.getElementsByClassName('hide');
   inputs = document.getElementsByClassName('furnitureInput');
+
     function change()
     {   
       //for each element which have 'hide' class
@@ -141,12 +157,16 @@ window.addEventListener('DOMContentLoaded', function() {
             var action = el.classList.contains(select.value.toLowerCase()) ? "add" : "remove"
             el.classList[action]('show'); 
       });  
-      //clear all chracteristic inputs when we change a type of product
+    }
+
+    //clear all chracteristic inputs 
+    function clear(){
       [].forEach.call(inputs, function(el){
             el.value="";
       });
     }
   select.addEventListener('change', change);
+  select.addEventListener('change', clear);
   change()
   });
   </script>
@@ -154,6 +174,7 @@ window.addEventListener('DOMContentLoaded', function() {
 <script>
 window.addEventListener('DOMContentLoaded', function() {
   var form = document.getElementById('addNewProduct');
+  let inputs = document.getElementsByClassName('furnitureInput');
   //wen form was submmited
   form.addEventListener('submit', async (e)=>{
     //cancel the default action(reload after submit)

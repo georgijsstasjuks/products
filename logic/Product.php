@@ -39,12 +39,10 @@ class Product implements base_operations{
         self::checkTable();
         $check=self::checkSku($data['SKU']);
         if($check==0){
-            $this->database->save("products2",$data);
-            $_SESSION['flash']="success";
+            $this->database->save("products2",$data);     
             return true;
-        } else {
-            $_SESSION['flash']="fail";
         }
+        $_SESSION["SKU_empty"]=true;
     return false;
     }
 
@@ -84,33 +82,88 @@ class Product implements base_operations{
     }
 
 
-    private function cleanExtraChar(array $filtred_array, string $option, string $characteristic){
+    private function validate_data($data){
+        $errors = 0;
+        if($data['SKU']==""){
+            $_SESSION["SKU_empty"]=true;
+            $errors++;
+        } else {
+            $_SESSION["SKU"]=htmlspecialchars($data['SKU']);
+        }
 
+        if($data['name']==""){
+            $_SESSION["name_empty"]=true;;
+            $errors++;
+        } else {
+            $_SESSION["name"]=htmlspecialchars($data['name']);
+        }
+
+        if($data['price']==""){
+            $_SESSION["price_empty"]=true;;
+            $errors++;
+        } else {
+            $_SESSION["price"]=htmlspecialchars($data['price']);
+        }
+
+        if($errors!=0){
+            $_SESSION['required']=true;
+            return false;
+        }
+        return true;
+    }
+
+    private function cleanExtraChar(array $filtred_array, string $option, string $characteristic){
         switch ($option){
             case 'Dimension':
+                $_SESSION['option_furniture'] = true;
                 if(count($filtred_array)==3){ 
                     array_walk($filtred_array,function(&$el){
                     $el=trim(strip_tags($el));
                 });
                 $characteristic .= implode($filtred_array,"x"); 
+                $_SESSION['height'] = htmlspecialchars($filtred_array[2]);
+                $_SESSION['width'] = htmlspecialchars($filtred_array[3]);
+                $_SESSION['length'] = htmlspecialchars($filtred_array[4]);
                 } else {
-                    $_SESSION['required']="all fields must be filled";
-                    return false;
-                }           
+                    if(!isset($filtred_array[2])){
+                        $_SESSION['height_empty'] = true;
+                    }else{
+                        $_SESSION['height'] = htmlspecialchars($filtred_array[2]);
+                    }
+                    if(!isset($filtred_array[3])){
+                        $_SESSION['width_empty'] = true;
+                    }else{
+                        $_SESSION['width'] = htmlspecialchars($filtred_array[3]);
+                    }
+                    if(!isset($filtred_array[4])){
+                        $_SESSION['length_empty'] = true;
+                    }
+                    else{
+                        $_SESSION['length'] = htmlspecialchars($filtred_array[4]);
+                    }
+                    $_SESSION['required'] = true;
+                    return false ; 
+                }      
                 break;
             case 'Size':
+                $_SESSION['option_disc'] = true;
                 if(count($filtred_array)==1){
-                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." MB";;    
+                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." MB";
+                    $_SESSION['disc'] =htmlspecialchars($filtred_array[0]);
                 } else {
-                    $_SESSION['required']="all fields must be filled";
+                    $_SESSION['required']=true;
+                    $_SESSION['disc_empty'] = true;
                     return false;
                 } 
                 break;
             case 'Weight':
+                $_SESSION['option_book'] = true;
                 if(count($filtred_array)==1){
                     $characteristic .= trim(strip_tags(implode($filtred_array))) ." Kg"; 
+                    $_SESSION['book'] = htmlspecialchars($filtred_array[1]);
                 } else {
-                    $_SESSION['required']="all fields must be filled";
+                    $_SESSION['required']=true;
+                    $_SESSION['book_empty'] = true;
                     return false;
                } 
                break;
@@ -130,11 +183,21 @@ class Product implements base_operations{
 
     //save data
     public function save(array $data){
+        $validate = self::validate_data($data);
+       
         $cleanData =self::cleanData($data);
-        if(!$cleanData){
+        if(!$cleanData || !$validate){
             return false;
-        }   
-       return self::addProduct($cleanData);
+        }
+       
+        $result = self::addProduct($cleanData);
+        if($result){
+            $_SESSION = [];
+            $_SESSION['flash']="success";
+        }else {
+            $_SESSION['flash']="fail";
+        }
+        return true;
     }
 
     //show all products on main page

@@ -23,21 +23,24 @@ class Database implements DatabaseInterface{
 
     //open connection to db
     public function connect(){
+        //path for *unix OS
         if($_SERVER['REQUEST_URI']=="/" || $_SERVER['REQUEST_URI']=="/index.php"){
             $path = 'config/env';
         }
+        //path for windows
         else{
-        $request = explode("/",$_SERVER['REQUEST_URI']);
-  
-        if($request[2] == "index.php" || $request[2]=="" || $request[1]=="")
-            $path = 'config/env';
-        else 
-            $path = '../config/env';
+            $request = explode("/",$_SERVER['REQUEST_URI']);
+    
+            if($request[2] == "index.php" || $request[2]=="" || $request[1]=="")
+                $path = 'config/env';
+            else 
+                $path = '../config/env';
         }
+        //get all parametrs
         foreach(self::getLines($path) as $value){
             $this->{$value[0]} = $value[1];         
         }
-
+        //connect to db
         $connect = mysqli_connect($this->host, $this->user, $this->password, $this->dbName) or die("ERROR " . mysqli_error($link));
         $connect->set_charset("utf-8");
         return $connect;
@@ -45,8 +48,7 @@ class Database implements DatabaseInterface{
 
     public function save($table, $data){
        $keys = implode(", ",array_keys($data));
-       $values = implode(", ",array_values($data));
-       $values = str_replace(', ', "', '", $values);
+       $values = implode("', '",array_values($data));
        $query ="INSERT INTO {$table} ({$keys}) VALUES ('$values')";  
        $result = mysqli_query($this->connect(),$query) or die("ERROR " . mysqli_error($this->connect()));   
        return $result;
