@@ -1,6 +1,7 @@
 <?php 
 declare(strict_types=1);
-require '../logic/Product.php';
+ session_start();
+
 ?>
 
 
@@ -26,9 +27,8 @@ require '../logic/Product.php';
 }
 
 .error{
- 
   border-color: red!important;
-
+  border-width: 2px;
 }
 </style>
 
@@ -47,7 +47,7 @@ if(isset($_SESSION['flash']))
     ?>
   <div class="alert alert-danger text-center" role="alert">This SKU is already used!</div>
   <?php }
-  
+  unset($_SESSION['flash']);
   ?>
 
 <?php 
@@ -57,37 +57,33 @@ if(isset($_SESSION['required'])){
 <div class="alert alert-danger text-center" role="alert">All fields must be filled in!</div>
 
 <?php } ?>
- <?php // var_dump(isset($_SESSION['disc_empty']))?>
 
 <form method="POST" action="" id="addNewProduct" class="container pt-5 mt-5">
   <div class="form-group row align-items-center">
     <label for="exampleInputEmail1" class="col-1">SKU</label>
-    <input type="text" class="form-control col-9 <?php if(isset($_SESSION['SKU_empty'])){?> error  <?php }?>" 
-    id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU" <?php if(isset($_SESSION['SKU'])){?> value="<?php echo $_SESSION['SKU'];?>"  <?php } ?> >
+    <input type="text" class="form-control col-9 validate" id="exampleInputEmail1" aria-describedby="emailHelp" name="SKU">
   </div>
   <div class="form-group row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Name</label>
-    <input type="text" class="form-control col-9 <?php if(isset($_SESSION['name_empty'])){?> error  <?php }?>"
-     id="exampleInputEmail1" aria-describedby="emailHelp" name="name" <?php if(isset($_SESSION['name'])){?> value="<?php echo $_SESSION['name'];?>"  <?php } ?> >
+    <input type="text" class="form-control col-9 validate" id="exampleInputEmail1" aria-describedby="emailHelp" name="name" >
   </div>
   <div class="form-group row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Price</label>
-<input type="number" class="form-control col-9 <?php if(isset($_SESSION['price_empty'])){?> error  <?php }?>"
- id="exampleInputEmail1" aria-describedby="emailHelp" name="price" <?php if(isset($_SESSION['price'])){?> value="<?php echo $_SESSION['price'];?>"  <?php } ?> >
+    <input type="number" class="form-control col-9 validate" id="exampleInputEmail1" aria-describedby="emailHelp" name="price">
   </div>
 
 
   <div class="form-group row align-items-center">
   <label for="exampleInputPassword1" class="col-2">Type swticher</label>
-  <select id="selectedCharacteristic" name="selectedCharacteristic" class="col-2" aria-required="true">
+  <select id="type" name="type" class="col-2" aria-required="true">
 
-    <option value="Size" <?php if(isset($_SESSION['option_disc'])){ ?> selected="selected" <?php   }?>>
+    <option value="Size">
         DvD-disc
     </option>
-    <option value="Weight" <?php if(isset($_SESSION['option_book'])){ ?> selected="selected" <?php  }?>>
+    <option value="Weight">
         Book
     </option>
-<option value="Dimension"  <?php if(isset($_SESSION['option_furniture'])){ ?> selected="selected" <?php }?> >
+<option value="Dimension">
         Furniture
     </option>
 </select>
@@ -97,34 +93,38 @@ if(isset($_SESSION['required'])){
 
 <div class="form-group hide size row align-items-center">
     <label for="text" class="col-1">Size</label>
-    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['disc_empty'])){?>error<?php }?>"
-     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['disc'])){?> value="<?php echo $_SESSION['disc'];?>"  <?php } ?> >
+    <input type="number" class="form-control furnitureInput col-9"
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[MB]">
     <small id="emailHelp" class="form-text text-muted col-3">Please, enter the size of DvD-disc in MB.</small>
 </div>
 
 <div class="form-group hide weight row align-items-center">
     <label for="exampleInputPassword1" class="col-1">Weight</label>
-    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['book_empty'])){?>error<?php }?>" 
-     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['book'])){?> value="<?php echo $_SESSION['book'];?>"  <?php } ?>>
+    <input type="number" class="form-control furnitureInput col-9" 
+     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[KG]">
     <small id="emailHelp" class="form-text text-muted col-3">Please, enter the weight of book.</small>
 </div>
 
-<div class="form-group hide dimension row align-items-center">
+
+<div class="form-group dimension row align-items-center hide">
     <label for="exampleInputPassword1" class="col-1">Height</label>
-    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['height_empty'])){?>error<?php }?>"
-    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['height'])){?> value="<?php echo $_SESSION['height'];?>"  <?php }?>>
-    </div>
-    <div class="form-group hide dimension row align-items-center">
+    <input type="number" class="form-control furnitureInput col-9"
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+</div>
+
+<div class="form-group  dimension row align-items-center hide">
     <label for="exampleInputPassword1" class="col-1">Widht</label>
-    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['width_empty'])){?>error<?php }?>" 
-    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]" <?php if(isset($_SESSION['width'])){?> value="<?php echo $_SESSION['width'];?>"  <?php }?> >
-    </div>
-    <div class="form-group hide dimension row align-items-center">
+    <input type="number" class="form-control furnitureInput col-9" 
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
+</div>
+
+<div class="form-group dimension row align-items-center hide">
     <label for="exampleInputPassword1" class="col-1">Length</label>
-    <input type="number" class="form-control furnitureInput col-9 <?php if(isset($_SESSION['length_empty'])){?>error<?php }?>"
-     id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]"<?php if(isset($_SESSION['length'])){?> value="<?php echo $_SESSION['length'];?>"  <?php }?> >
+    <input type="number" class="form-control furnitureInput col-9"
+    id="exampleInputEmail1" aria-describedby="emailHelp" name="characteristics[]">
     <small id="emailHelp" class="form-text text-muted col-3">Please, provide dimension dimension in HxWxL format.</small>
-    </div>
+</div>
+
 </div>
 <input hidden name="action" value="save">
 
@@ -140,12 +140,12 @@ if(isset($_SESSION['required'])){
 </div>
 
 
-<?php $_SESSION=[];?>
+
 
 <script>
 
 window.addEventListener('DOMContentLoaded', function() {
-  var select = document.getElementById('selectedCharacteristic'),
+  var select = document.getElementById('type'),
   hide = document.getElementsByClassName('hide');
   inputs = document.getElementsByClassName('furnitureInput');
 
@@ -156,6 +156,7 @@ window.addEventListener('DOMContentLoaded', function() {
         //check, does the current element have a selected class
             var action = el.classList.contains(select.value.toLowerCase()) ? "add" : "remove"
             el.classList[action]('show'); 
+          
       });  
     }
 
@@ -175,11 +176,39 @@ window.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('DOMContentLoaded', function() {
   var form = document.getElementById('addNewProduct');
   let inputs = document.getElementsByClassName('furnitureInput');
-  //wen form was submmited
+  let validate = document.getElementsByClassName('validate');
+  var select = document.getElementById('type');
+  //when form was submmited
   form.addEventListener('submit', async (e)=>{
     //cancel the default action(reload after submit)
+  let errors = 0;
     e.preventDefault();
-        fetch('../routing/routes.php',{
+    //check if fields are empty 
+    [].forEach.call(validate, function(el){         
+            if(el.value=="") {
+              el.classList.add('error');
+              errors++;
+            } else {
+              if(el.classList.contains('error')){
+                  el.classList.remove('error');
+              }
+            }
+      });
+
+      [].forEach.call(inputs, function(el){      
+              if(el.value=="" && el.parentNode.classList.contains(select.value.toLowerCase())) {
+                el.classList.add('error');
+                errors++;
+              } else {
+                if(el.classList.contains('error')){
+                    el.classList.remove('error');
+                }
+              }
+        });
+
+        //if all fields are not empty we can send a request to the server
+      if(errors==0)
+       fetch('../routing/routes.php',{
           method: 'POST',
           body: new FormData(addNewProduct) //sent to server all data from form
         })
@@ -188,6 +217,7 @@ window.addEventListener('DOMContentLoaded', function() {
         })
         .then((text) => {
           location.reload();
+          
       });
       });
   });

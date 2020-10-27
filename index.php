@@ -72,22 +72,26 @@
     };
 window.addEventListener('DOMContentLoaded', function() {
   var form = document.getElementById('actionForm');
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
-       await fetch('routing/routes.php',{
+       await fetch('routing/routes.php',{ //send data to the server
           method: 'POST',
-          body: new FormData(actionForm)
+          body: new FormData(actionForm)//get data from form
         })
         .then((response) => {
-             return response.text();
+             return response.text(); 
         })
+        //when all records are deleted from the database they should be removed from the page
         .then((text) => {
+            //get all elements that were checked for deleting
             let deletingEl = document.getElementsByClassName('checked');
             [].forEach.call(deletingEl, function(el){
+            //add class for delete animation
              el.classList.add('del');
              setTimeout(function(){el.remove()},500);
             });  
-           if(text.length>2){
+           if(text.length>2){//if from response we didn't received location page stay withou reloading
                location.replace(text);
             }
            

@@ -36,13 +36,14 @@ class Product implements base_operations{
 
     //add products to the db
     private function addProduct(array $data){
-        self::checkTable();
-        $check=self::checkSku($data['SKU']);
-        if($check==0){
-            $this->database->save("products2",$data);     
+        self::checkTable();    
+        $check=self::checkSku($data['SKU']);      
+        if($check==0){        
+            $this->database->save("products2",$data); 
+            $_SESSION["flash"]="success";   
             return true;
         }
-        $_SESSION["SKU_empty"]=true;
+        $_SESSION["flash"]="ERROR";
     return false;
     }
 
@@ -56,119 +57,40 @@ class Product implements base_operations{
 
     //clean data before saving(deleting all extraspaces and HTML tags)
     private function cleanData(array $data){
-        $option = strip_tags($data['selectedCharacteristic']);  
-        $characteristic = $option . ": ";
-        $filtred_array = array_filter($data['characteristics']); 
-        $checkFillData = true;
 
         foreach($data as $key =>$value){
-            if($key=='selectedCharacteristic'){
-                break;
-            }
+            if(is_array($value)) break;
             $data[$key] = strip_tags(trim($value));
         }
-
-        $characteristic = self::cleanExtraChar($filtred_array, $option,$characteristic);
-        if(!$characteristic){
-            return false;
-        }
-
-        $data['characteristics'] =  $characteristic;
-        
+        $characteristic = self::cleanExtraChar($data['characteristics']);
+        $data['characteristics'] =  $characteristic;   
         unset($data['action']);
-        unset($data['selectedCharacteristic']);
+        unset($data['type']);
         
         return $data;
     }
 
+    //remove html entities from special characteristics and prepare data to be saved in the database
+    private function cleanExtraChar(array $filtred_array){
+        $_POST['characteristics'] = array_filter($_POST['characteristics']);
+        $characteristic = "";
+        //remove spaces and HTML entities
+        array_walk($_POST['characteristics'], 
+            function(&$el){
+                return trim(strip_tags($el));
+        });
+        $value = implode('x',$_POST['characteristics']);
 
-    private function validate_data($data){
-        $errors = 0;
-        if($data['SKU']==""){
-            $_SESSION["SKU_empty"]=true;
-            $errors++;
-        } else {
-            $_SESSION["SKU"]=htmlspecialchars($data['SKU']);
-        }
 
-        if($data['name']==""){
-            $_SESSION["name_empty"]=true;;
-            $errors++;
-        } else {
-            $_SESSION["name"]=htmlspecialchars($data['name']);
-        }
-
-        if($data['price']==""){
-            $_SESSION["price_empty"]=true;;
-            $errors++;
-        } else {
-            $_SESSION["price"]=htmlspecialchars($data['price']);
-        }
-
-        if($errors!=0){
-            $_SESSION['required']=true;
-            return false;
-        }
-        return true;
-    }
-
-    private function cleanExtraChar(array $filtred_array, string $option, string $characteristic){
-        switch ($option){
-            case 'Dimension':
-                $_SESSION['option_furniture'] = true;
-                if(count($filtred_array)==3){ 
-                    array_walk($filtred_array,function(&$el){
-                    $el=trim(strip_tags($el));
-                });
-                $characteristic .= implode($filtred_array,"x"); 
-                $_SESSION['height'] = htmlspecialchars($filtred_array[2]);
-                $_SESSION['width'] = htmlspecialchars($filtred_array[3]);
-                $_SESSION['length'] = htmlspecialchars($filtred_array[4]);
-                } else {
-                    if(!isset($filtred_array[2])){
-                        $_SESSION['height_empty'] = true;
-                    }else{
-                        $_SESSION['height'] = htmlspecialchars($filtred_array[2]);
-                    }
-                    if(!isset($filtred_array[3])){
-                        $_SESSION['width_empty'] = true;
-                    }else{
-                        $_SESSION['width'] = htmlspecialchars($filtred_array[3]);
-                    }
-                    if(!isset($filtred_array[4])){
-                        $_SESSION['length_empty'] = true;
-                    }
-                    else{
-                        $_SESSION['length'] = htmlspecialchars($filtred_array[4]);
-                    }
-                    $_SESSION['required'] = true;
-                    return false ; 
-                }      
-                break;
-            case 'Size':
-                $_SESSION['option_disc'] = true;
-                if(count($filtred_array)==1){
-                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." MB";
-                    $_SESSION['disc'] =htmlspecialchars($filtred_array[0]);
-                } else {
-                    $_SESSION['required']=true;
-                    $_SESSION['disc_empty'] = true;
-                    return false;
-                } 
-                break;
-            case 'Weight':
-                $_SESSION['option_book'] = true;
-                if(count($filtred_array)==1){
-                    $characteristic .= trim(strip_tags(implode($filtred_array))) ." Kg"; 
-                    $_SESSION['book'] = htmlspecialchars($filtred_array[1]);
-                } else {
-                    $_SESSION['required']=true;
-                    $_SESSION['book_empty'] = true;
-                    return false;
-               } 
-               break;
-           }
-    return  $characteristic;
+        
+        $unitOfMeasurement = array_keys($_POST['characteristics']);
+        $unitOfMeasurement = array_filter($unitOfMeasurement,
+            function($el){
+                return !is_numeric($el);
+        });
+        $unitOfMeasurement = implode("",$unitOfMeasurement);
+        $characteristic  .= trim($_POST['type'] . ": " . $value . " " . $unitOfMeasurement);
+        return $characteristic;
     }
 
     //check if table already exists
@@ -183,20 +105,8 @@ class Product implements base_operations{
 
     //save data
     public function save(array $data){
-        $validate = self::validate_data($data);
-       
-        $cleanData =self::cleanData($data);
-        if(!$cleanData || !$validate){
-            return false;
-        }
-       
+        $cleanData =self::cleanData($data); 
         $result = self::addProduct($cleanData);
-        if($result){
-            $_SESSION = [];
-            $_SESSION['flash']="success";
-        }else {
-            $_SESSION['flash']="fail";
-        }
         return true;
     }
 

@@ -1,7 +1,7 @@
 <?php 
 declare(strict_types=1);
 require_once 'DatabaseIntarface.php';
-class Database implements DatabaseInterface{
+class Database implements DatabaseInterface {
 
     private string $host;
     private string $user; 
@@ -36,7 +36,7 @@ class Database implements DatabaseInterface{
             else 
                 $path = '../config/env';
         }
-        //get all parametrs
+        //get all parametrs for connecting
         foreach(self::getLines($path) as $value){
             $this->{$value[0]} = $value[1];         
         }
@@ -66,8 +66,5 @@ class Database implements DatabaseInterface{
         return $result;
     }
 }
-/*
-$obj = new Database();
-$obj->delete("products2","ADSAD");
-*/
+
 ?>
